@@ -5,7 +5,7 @@
 #   contact at guill.peiffer@gmail.com
 #   https://github.com/ImMaja/sudoku
 
-from random import seed, randrange
+from random import seed, randrange, choice
 import os.path
 import os
 
@@ -149,9 +149,9 @@ def menu():
     if grid_choice == 2:
         generate_grid(mg)
 
-    if menu_choice == 0:
-        return 0
-    return 1
+    if menu_choice == 1:
+        return 1
+    return 0
 
 
 
@@ -245,7 +245,7 @@ def correct_move(mg, line, column, value):
     
     return 0
 
-
+# Cette fonction va mettre à jour la matrice lors d'un mouvement.
 def update_matrice(mg, line, column, value):
     def _insert(value):
         if value == '_':
@@ -256,10 +256,46 @@ def update_matrice(mg, line, column, value):
 
     return None
 
+# Cette fonction permet de remplir totalement une grille de sudoku à partir d'une grille
+# vide ou partiellement compléter.
 def solve_grid(mg):
-    #  Rien pour le moment
+    lst = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    seed(randrange(1, 1000000))
+
+    for a in range(9):
+        random_choice = choice(lst)
+        lst.remove(random_choice)
+        mg[0][a] = random_choice
+
+        update_matrice(mg, line = 0, column = a, value = random_choice)
+    
+    print_patern(mg)
+
+    all_line_solutions = []
+
+    for i in range(1, 9):
+        for j in range(9):
+            temp = []
+            for val in range(1, 10):
+                if correct_move(mg, line = i, column = j, value = val) == 0:
+                    temp += [val]
+                    
+            all_line_solutions += [temp]
+
+        # for x in range(9):
+        #     mg[i][x] = 
+        
+        break
+    
+    for line in all_line_solutions:
+        print(line)
+
+    temp = str(input())
     return None
 
+
+# Cette fonction va permettre, à partir d'une grille entièrement compléter, de créer
+# une grille à solution unique.
 def generate_grid(mg):
     # Rien pour le moment.
     return None
@@ -295,9 +331,15 @@ while(1):
 
         print_patern(mg)
         print('\n\nFélicitation, vous avez résolue la grille.')
-        temp = input('Appyez sur ENTRER pour retourner au menu principal.')
+        try:
+            temp = input('Appyez sur ENTRER pour retourner au menu principal.')
+        except KeyboardInterrupt:
+            exitSudoku()
 
     elif menu_var == 0:
-        generate_grid(mg)
+        solve_grid(mg)
         print_patern(mg)
-        temp = input('Appyez sur ENTRER pour retourner au menu principal.')
+        try:
+            temp = input('Appyez sur ENTRER pour retourner au menu principal.')
+        except KeyboardInterrupt:
+            exitSudoku()
