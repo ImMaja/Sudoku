@@ -5,7 +5,7 @@
 #   contact at guill.peiffer@gmail.com
 #   https://github.com/ImMaja/sudoku
 
-from random import seed, randrange, choice
+from random import random, seed, randrange, choice
 import os.path
 import os
 
@@ -146,7 +146,7 @@ def menu():
                         column_number += 1
                 line_number += 1
 
-    if grid_choice == 2:
+    elif grid_choice == 2:
         generate_grid(mg)
 
     if menu_choice == 1:
@@ -156,7 +156,6 @@ def menu():
 
 
 # Cette fonction permet de vérifier si la grille est complète ou non.
-# Lorsque les 9 matrices sont complété, le programme sort de la boucle.
 def over(mg):
     for line in mg:
         for char in line:
@@ -259,38 +258,79 @@ def update_matrice(mg, line, column, value):
 # Cette fonction permet de remplir totalement une grille de sudoku à partir d'une grille
 # vide ou partiellement compléter.
 def solve_grid(mg):
-    lst = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+   
+    initial_lst = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     seed(randrange(1, 1000000))
 
-    for a in range(9):
-        random_choice = choice(lst)
-        lst.remove(random_choice)
-        mg[0][a] = random_choice
+    first_mat = [[], [], []]
 
-        update_matrice(mg, line = 0, column = a, value = random_choice)
-    
-    print_patern(mg)
+    y = 0
+    for x in range(0, 8, 3):
+        for r in range(x, x+3):
+            temp = choice(initial_lst)
+            initial_lst.remove(temp)
+            first_mat[y] += [temp]
+            mg[0][r] = temp
+        y+=1
 
-    all_line_solutions = []
+        for i in range(1, 3):
+            temp_list = []
+            for var in initial_lst:
+                if var not in first_mat[i-1]:
+                    temp_list += [var]
+            # for a in range(9):
+            #     if initial_lst[a] not in first_mat[i-1]:
+            #         temp_list += [initial_lst[a]]
+            for j in range(0, 3):
+                temp = choice(first_mat[i-1])
+                first_mat[i-1].remove(temp)
+                mg[i][j] = temp
+                
 
-    for i in range(1, 9):
-        for j in range(9):
-            temp = []
-            for val in range(1, 10):
-                if correct_move(mg, line = i, column = j, value = val) == 0:
-                    temp += [val]
-                    
-            all_line_solutions += [temp]
 
-        # for x in range(9):
-        #     mg[i][x] = 
-        
-        break
-    
-    for line in all_line_solutions:
-        print(line)
+
+
+    # print_patern(mg)
+
 
     temp = str(input())
+
+
+
+    # previous_line_matrice= [[], [], []]    
+
+    # for a in range(9):
+    #     random_choice = choice(lst)
+    #     lst.remove(random_choice)
+    #     mg[0][a] = random_choice
+
+    #     if a in range(0,3):
+    #         previous_line_matrice[0] += [random_choice]
+    #     elif a in range(3,6):
+    #         previous_line_matrice[1] += [random_choice]
+    #     elif a in range(6,9):
+    #         previous_line_matrice[2] += [random_choice]
+
+    #     update_matrice(mg, line = 0, column = a, value = random_choice)
+    
+
+    
+    # print_patern(mg)
+
+
+    # all_line_solutions = []
+    # for j in range(9):
+    #     temp = []
+    #     for val in range(1, 10):
+    #         if correct_move(mg, line = 1, column = j, value = val) == 0:
+    #             temp += [val]
+                    
+    #     all_line_solutions += [temp]
+
+    # for line in all_line_solutions:
+    #     print(line)
+
+    
     return None
 
 
