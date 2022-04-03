@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # Le script utilise des caractères UTF-8.
 
+# Python 3.10 &+ nécessaire pour lancer le script.
+
 #   PEIFFER Guillaume
 #   contact at guill.peiffer@gmail.com
 #   https://github.com/ImMaja/sudoku
@@ -20,14 +22,14 @@ mg = [['_' for j in range(9)]for i in range(9)]
 player_choice = [0, 0, 0]
 
 # Fonction permettant de quitter "proprement" le programme avec CTRL + C.
-def exitSudoku():
+def exitSudoku() -> None:
     os.system('clear')
     print('Exit.')
     exit()
 
 
 # Cette fonction a uniquement pour but l'affichage de la grille du sudoku.
-def print_patern(mg):
+def print_patern(mg:list) -> None:
     os.system('clear')
     print(
     '\n', '          1  2  3     4  5  6     7  8  9',
@@ -58,7 +60,7 @@ def print_patern(mg):
 
 
 #Fonction permettant l'affichage du menu, l'utilisateur choisi s'il souhaite jouer au sudoku ou cracker une grille.
-def menu():
+def menu() -> int:
     def _sudoku():
         os.system('clear')
         print('\n\n',
@@ -73,7 +75,7 @@ def menu():
     menu_choice = int(-1)
     grid_choice = int(-1)
 
-    def _first_menu(menu_choice):
+    def _first_menu(menu_choice:int) -> int:
         while(1):
             try:
                 _sudoku()
@@ -82,16 +84,16 @@ def menu():
                       '\n[3] - Quitter.')
 
                 menu_choice = int(input("\n--> "))
-                if menu_choice == 3:
+                if (menu_choice == 3):
                     exitSudoku()
-                elif menu_choice in range(1, 3):
+                elif (menu_choice in range(1, 3)):
                     return menu_choice
             except ValueError:
                 pass
             except KeyboardInterrupt:
                 exitSudoku()
 
-    def _second_menu(grid_choice):
+    def _second_menu(grid_choice:int) -> int:
         while(1):
             try:
                 _sudoku()
@@ -100,7 +102,7 @@ def menu():
                       '\n[3] - Retour.')
 
                 grid_choice = int(input("\n--> "))
-                if grid_choice in range(1, 4):
+                if (grid_choice in range(1, 4)):
                     return grid_choice
             except ValueError:
                 pass
@@ -111,24 +113,24 @@ def menu():
     bool_first_menu = False
     bool_second_menu = False
 
-    while bool_first_menu == False:
+    while (bool_first_menu == False):
         menu_choice = _first_menu(menu_choice)
 
-        while bool_second_menu == False:
+        while (bool_second_menu == False):
             grid_choice = _second_menu(grid_choice)
-            if grid_choice == 3:
+            if (grid_choice == 3):
                 bool_first_menu = False
                 bool_second_menu = True
             else:
                 bool_second_menu = True
                 bool_first_menu = True
-        if grid_choice == 3:
+        if (grid_choice == 3):
             bool_second_menu = False
 
-    if grid_choice == 1:
+    if (grid_choice == 1):
         grid_path = False
 
-        while os.path.isfile(grid_path) != True:
+        while (os.path.isfile(grid_path) != True):
             print('\n', 'Placez une grille de sudoku au format .txt dans le même dossier que ce programme.',
                   '\n', 'Quel est le nom de votre grille ?')
 
@@ -138,28 +140,28 @@ def menu():
             line_number = 0
             for current_line in file:
                 column_number = 0
-                if '*' in current_line:
+                if ('*' in current_line):
                     continue
                 for char in str(current_line):
-                    if char == '_' or char.isdigit():
+                    if (char == '_' or char.isdigit()):
                         update_matrice(mg, line = line_number, column = column_number, value = char)
                         column_number += 1
                 line_number += 1
 
-    elif grid_choice == 2:
+    elif (grid_choice == 2):
         generate_grid(mg)
 
-    if menu_choice == 1:
+    if (menu_choice == 1):
         return 1
     return 0
 
 
 
 # Cette fonction permet de vérifier si la grille est complète ou non.
-def over(mg):
+def over(mg:list) -> bool:
     for line in mg:
         for char in line:
-            if char == '_' or char == 0:
+            if (char == '_' or char == 0):
                 return False
     return True
 
@@ -167,24 +169,23 @@ def over(mg):
 
 # Cette fonction va demander au joueur d'inscrire une valeur sur la grille en vérifiant
 # qu'il n'a pas fais d'erreur de saisie.
-def player_move(player_choice):
-
+def player_move(player_choice:list) -> None:
     while(1):
         try:
             user_interaction = str(input('--> '))
         except KeyboardInterrupt:
             exitSudoku()
 
-        if user_interaction == 'quit':
+        if (user_interaction == 'quit'):
             exitSudoku()
 
-        elif len(user_interaction) != 5:
+        elif (len(user_interaction) != 5):
             print("Vous avez fait une erreur de saisie.")
-        elif user_interaction[0].isalpha() or user_interaction[2].isalpha() or user_interaction[4].isalpha() or user_interaction[4] == '_':
+        elif (user_interaction[0].isalpha() or user_interaction[2].isalpha() or user_interaction[4].isalpha() or user_interaction[4] == '_'):
             print("Vous avez fait une erreur de saisie.")
-        elif user_interaction[1].isdigit() or user_interaction[3].isdigit():
+        elif (user_interaction[1].isdigit() or user_interaction[3].isdigit()):
             print("Vous avez fait une erreur de saisie.")
-        elif user_interaction[0] == '0' or user_interaction[2] == '0':
+        elif (user_interaction[0] == '0' or user_interaction[2] == '0'):
             print("Vous avez fait une erreur de saisie.")
         else:
 
@@ -196,58 +197,58 @@ def player_move(player_choice):
 
 #  Cette fonction va vérifier si un placement est correct ( ligne, colonne et zone ).
 #  La fonction peut retourner 0, 1, 2 ou 3.
-def correct_move(mg, line, column, value):
+def correct_move(mg:list, line:int, column:int, value:int) -> int:
     
     # Check de la ligne
     for i in range(9):
-        if mg[line][i] == value:
+        if (mg[line][i] == value):
             return 1
     
     # Check de la colonne
     for i in range(9):
-        if mg[i][column] == value:
+        if (mg[i][column] == value):
             return 2
     
     # Check de la zone
-    if line in range(0,3) and column in range(0,3):
+    if (line in range(0,3) and column in range(0,3)):
         start_line = int(0)
         start_column = int(0)
-    elif line in range(0,3) and column in range(3,6):
+    elif (line in range(0,3) and column in range(3,6)):
         start_line = int(0)
         start_column = int(3)
-    elif line in range(0,3) and column in range(6,9):
+    elif (line in range(0,3) and column in range(6,9)):
         start_line = int(0)
         start_column = int(6)
-    elif line in range(3,6) and column in range(0,3):
+    elif (line in range(3,6) and column in range(0,3)):
         start_line = int(3)
         start_column = int(0)
-    elif line in range(3,6) and column in range(3,6):
+    elif (line in range(3,6) and column in range(3,6)):
         start_line = int(3)
         start_column = int(3)
-    elif line in range(3,6) and column in range(6,9):
+    elif (line in range(3,6) and column in range(6,9)):
         start_line = int(3)
         start_column = int(6)
-    elif line in range(6,9) and column in range(0,3):
+    elif (line in range(6,9) and column in range(0,3)):
         start_line = int(6)
         start_column = int(0)
-    elif line in range(6,9) and column in range(3,6):
+    elif (line in range(6,9) and column in range(3,6)):
         start_line = int(6)
         start_column = int(3)
-    elif line in range(6,9) and column in range(6,9):
+    elif (line in range(6,9) and column in range(6,9)):
         start_line = int(6)
         start_column = int(6)
     
     for i in range(start_line, start_line+3):
         for j in range(start_column, start_column+3):
-            if mg[i][j] == value:
+            if (mg[i][j] == value):
                 return 3
     
     return 0
 
 # Cette fonction va mettre à jour la matrice lors d'un mouvement.
-def update_matrice(mg, line, column, value):
+def update_matrice(mg:list, line:int, column:int, value:str):
     def _insert(value):
-        if value == '_':
+        if (value == '_'):
             return str(value)
         return int(value)
 
@@ -255,88 +256,67 @@ def update_matrice(mg, line, column, value):
 
     return None
 
-# Cette fonction permet de remplir totalement une grille de sudoku à partir d'une grille
-# vide ou partiellement compléter.
-def solve_grid(mg):
+# Cette fonction permet de remplir totalement une grille de sudoku à partir d'une grille vide
+# et d'en créer une grille a solution unique
+def generate_grid(mg:list) -> list:
+
+    def _getAllPossibilitiesForPosition(mg:list, line:int, column:int) -> list:
+        possibilities = []
+
+        for i in range(1, 10):
+            if (correct_move(mg, line, column, value = i) == 0):
+                possibilities += [i]
+        return possibilities
+    
+    def _getLineInZone(mg:list, line:int, column:int) -> list:
+        if (column in range(0, 3)):
+            start = int(0)
+        elif (column in range(3, 6)):
+            start = int(3)
+        elif (column in range(6, 9)):
+            start = int(6)
+        
+        lineInZone = [start, start+1, start+2]
+        return lineInZone
+        
    
-    initial_lst = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    seed(randrange(1, 1000000))
+    x = [i for i in range(1, 10)]
 
-    first_mat = [[], [], []]
+    for i in range(0, 9):
+        temp = choice(x)
+        mg[0][i] = temp
+        x.remove(temp)
 
-    y = 0
-    for x in range(0, 8, 3):
-        for r in range(x, x+3):
-            temp = choice(initial_lst)
-            initial_lst.remove(temp)
-            first_mat[y] += [temp]
-            mg[0][r] = temp
-        y+=1
-
-        for i in range(1, 3):
-            temp_list = []
-            for var in initial_lst:
-                if var not in first_mat[i-1]:
-                    temp_list += [var]
-            # for a in range(9):
-            #     if initial_lst[a] not in first_mat[i-1]:
-            #         temp_list += [initial_lst[a]]
-            for j in range(0, 3):
-                temp = choice(first_mat[i-1])
-                first_mat[i-1].remove(temp)
-                mg[i][j] = temp
-                
+    for z in range(1, 9):
+        line_possibilities = []
+        for x in range(9):
+            line_possibilities += [_getAllPossibilitiesForPosition(mg, line = z, column = x)]
+        
 
 
+        break
+
+    print_patern(mg)
 
 
-    # print_patern(mg)
+    for line in line_possibilities:
+        print(line)
+
+
 
 
     temp = str(input())
 
 
 
-    # previous_line_matrice= [[], [], []]    
-
-    # for a in range(9):
-    #     random_choice = choice(lst)
-    #     lst.remove(random_choice)
-    #     mg[0][a] = random_choice
-
-    #     if a in range(0,3):
-    #         previous_line_matrice[0] += [random_choice]
-    #     elif a in range(3,6):
-    #         previous_line_matrice[1] += [random_choice]
-    #     elif a in range(6,9):
-    #         previous_line_matrice[2] += [random_choice]
-
-    #     update_matrice(mg, line = 0, column = a, value = random_choice)
-    
-
-    
-    # print_patern(mg)
-
-
-    # all_line_solutions = []
-    # for j in range(9):
-    #     temp = []
-    #     for val in range(1, 10):
-    #         if correct_move(mg, line = 1, column = j, value = val) == 0:
-    #             temp += [val]
-                    
-    #     all_line_solutions += [temp]
-
-    # for line in all_line_solutions:
-    #     print(line)
+   
 
     
     return None
 
 
-# Cette fonction va permettre, à partir d'une grille entièrement compléter, de créer
-# une grille à solution unique.
-def generate_grid(mg):
+# Fonction permettent de résoudre une grille de Sukodu partiellement complété.
+def solve_grid(mg:list) -> list:
     # Rien pour le moment.
     return None
 
@@ -347,11 +327,11 @@ def generate_grid(mg):
 while(1):
     menu_var = int(menu())
 
-    if menu_var == 1:
+    if (menu_var == 1):
         while over(mg) == False:
             print_patern(mg)
             player_move(player_choice)
-            if player_choice[2] != 0:
+            if (player_choice[2] != 0):
                 is_correct_move = correct_move(mg, line = player_choice[0], column = player_choice[1], value = player_choice[2])
                 match is_correct_move:
                     case 0:
@@ -376,8 +356,8 @@ while(1):
         except KeyboardInterrupt:
             exitSudoku()
 
-    elif menu_var == 0:
-        solve_grid(mg)
+    elif (menu_var == 0):
+        generate_grid(mg)
         print_patern(mg)
         try:
             temp = input('Appyez sur ENTRER pour retourner au menu principal.')
