@@ -30,7 +30,7 @@ def exitSudoku() -> None:
 
 # Cette fonction a uniquement pour but l'affichage de la grille du sudoku.
 def print_patern(mg:list) -> None:
-    os.system('clear')
+    # os.system('clear')
     print(
     '\n', '          1  2  3     4  5  6     7  8  9',
     '\n', '          ╵  ╵  ╵     ╵  ╵  ╵     ╵  ╵  ╵'
@@ -276,9 +276,9 @@ def generate_grid(mg:list) -> list:
         elif (column in range(6, 9)):
             start = int(6)
         
-        lineInZone = [start, start+1, start+2]
+        lineInZone = [mg[line-1][start], mg[line-1][start+1], mg[line-1][start+2]]
         return lineInZone
-        
+
    
     x = [i for i in range(1, 10)]
 
@@ -287,31 +287,42 @@ def generate_grid(mg:list) -> list:
         mg[0][i] = temp
         x.remove(temp)
 
-    for z in range(1, 9):
+    for z in range(1, 3):
         line_possibilities = []
+
         for x in range(9):
             line_possibilities += [_getAllPossibilitiesForPosition(mg, line = z, column = x)]
-        
+
+        for i in range(9):
+            current_matrice_line = _getLineInZone(mg, line = z, column = i)
+            if (i in range(0, 3)):
+                previous_matrice_line = _getLineInZone(mg, line = z, column = 6)
+            else:
+                previous_matrice_line = _getLineInZone(mg, line = z, column = i-3)
+
+            # Si ça fais une boucle infini c'est probablement ici !
+            while(1):
+                temp = choice(line_possibilities[i])
+                if (temp not in current_matrice_line and temp in previous_matrice_line):
+                    mg[z][i] = temp
+                    break
+
+            for o in range(len(line_possibilities)):
+                for p in range(len(line_possibilities[o])):
+                    if (temp == line_possibilities[o][p]):
+                        line_possibilities[o].remove(temp)
+                        break
 
 
-        break
+
 
     print_patern(mg)
-
-
-    for line in line_possibilities:
-        print(line)
 
 
 
 
     temp = str(input())
 
-
-
-   
-
-    
     return None
 
 
