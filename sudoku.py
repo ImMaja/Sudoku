@@ -2,7 +2,7 @@
 # Le script utilise des caractères UTF-8.
 
 # Python 3.10 &+ nécessaire pour lancer le script.
-
+#salut
 #   PEIFFER Guillaume
 #   contact at guill.peiffer@gmail.com
 #   https://github.com/ImMaja/sudoku
